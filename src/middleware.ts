@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const protectedRoutes = createRouteMatcher(['/dashboard(.*)'])
-createRouteMatcher(['/'])
+createRouteMatcher(['/', "/api/uploadthing"])
 
 export default clerkMiddleware((auth, req)=> {
   if(!auth().userId && protectedRoutes(req)) return auth().redirectToSignIn()
