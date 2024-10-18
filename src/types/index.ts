@@ -65,7 +65,6 @@ interface statistics{
 interface youtubeDataItems{
     contentDetails: {
         caption: string,
-        contentRating: {},
         definition: string,
         dimension: string,
         duration: string,
@@ -93,8 +92,8 @@ type UploadThingData = {
     key: string,
     lastModified: Date,
     name: string,
-    serverData: {
-        uploadedBy: string
+    serverData?: {
+        uploadedBy?: string
     },
     size: number,
     type: string,

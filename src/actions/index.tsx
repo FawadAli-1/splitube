@@ -50,7 +50,7 @@ export const getAllVideos = async () => {
 
       const youtubeData = await youtubeResponse.json();
       const videoId = youtubeData.items.map(
-        (item: any) => item.contentDetails.videoId
+        (item: {contentDetails: {videoId:string}}) => item.contentDetails.videoId
       );
 
       try {
@@ -113,9 +113,9 @@ export const getOneVideo = async (videoId: string) => {
   }
 };
 
-const userTasks: any = {};
+const userTasks = {};
 
-export const startUserTask = async (userId: any) => {
+export const startUserTask = async (userId: string) => {
 
   const user = await VideoTestModel.findOne({ userId });
 

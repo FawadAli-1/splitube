@@ -97,7 +97,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
 
       await testOneInProgress(id)
 
-      await startUserTask(userId)
+      await startUserTask(userId!)
 
       form1.reset();
       form2.reset();
