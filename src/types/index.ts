@@ -69,7 +69,7 @@ interface youtubeDataItems{
         definition: string,
         dimension: string,
         duration: string,
-        hasCustomThumbnail: Boolean,
+        hasCustomThumbnail: boolean,
         licensedContent: boolean,
         projection: string
     }

@@ -44,7 +44,6 @@ import { SendHorizonal } from "lucide-react";
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   const {userId} = useAuth()
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);
-  const [uploadFiles, setUploadFiles] = useState("");
   const [uploadCompleted1, setUploadCompleted1] = useState(false);
   const [uploadCompleted2, setUploadCompleted2] = useState(false);
   const { toast } = useToast();
@@ -102,7 +101,6 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
 
       form1.reset();
       form2.reset();
-      setUploadFiles("");
     } catch (error) {
       console.error("Error submitting forms or uploading files:", error);
       toast({

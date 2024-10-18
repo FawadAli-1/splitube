@@ -2,7 +2,7 @@
 
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
-import { IChannelId, TUploadThingData, YoutubeData } from "@/types";
+import { IChannelId, TUploadThingData } from "@/types";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import schedule from "node-schedule"
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { getAllVideos, startUserTask, stopUserTask } from "@/actions";
+import { getAllVideos } from "@/actions";
 import { useState, useEffect } from "react";
 import { YoutubeData } from "@/types";
 import {
@@ -19,15 +19,11 @@ import Link from "next/link";
 
 const VideoCards = () => {
   const [data, setData] = useState<YoutubeData | null>(null);
-  const [loading, setLoading] = useState(false);
   const getYoutubeData = async () => {
     try {
-      setLoading(true);
       const data: YoutubeData = await getAllVideos();
       setData(data);
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
       console.log(error);
     }
   };
