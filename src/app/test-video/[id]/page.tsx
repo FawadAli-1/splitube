@@ -4,9 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   checkForThumbnailInDb,
-  checkIfTestingInProgressIsTrue,
   getOneVideo,
   saveThumbnail,
+  startUserTask,
+  testOneInProgress,
+  toggleTestingInProgess,
   updateAndSaveFormOneToDb,
   updateAndSaveFormTwoToDb,
   updateThumbnail,
@@ -37,9 +39,10 @@ import {
 
 import { UploadDropzone } from "@/utils/uploadthing";
 import { useAuth } from "@clerk/nextjs";
-import { Check, SendHorizonal } from "lucide-react";
+import { SendHorizonal } from "lucide-react";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
+  const {userId} = useAuth()
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);
   const [uploadFiles, setUploadFiles] = useState("");
   const [uploadCompleted1, setUploadCompleted1] = useState(false);
@@ -75,7 +78,6 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
     },
   });
 
-  // Function to handle submission of both forms and uploadthing dropzone
   const onSubmitBothFormsAndUpload = async () => {
     try {
       const response = await checkForThumbnailInDb();
@@ -87,62 +89,43 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
         return;
       }
 
-      const isTestingInProgress = await checkIfTestingInProgressIsTrue()
-      if(isTestingInProgress?.success === false){
-        toast({
-          title: isTestingInProgress?.message,
-          variant: 'destructive'
-        })
-        return
-      }
-
       await form1.handleSubmit((values) => updateAndSaveFormOneToDb(values))();
       await form2.handleSubmit((values) => {
         updateAndSaveFormTwoToDb(values);
       })();
 
+      await toggleTestingInProgess();
+
+      await testOneInProgress(id)
+
+      await startUserTask(userId)
 
       form1.reset();
       form2.reset();
       setUploadFiles("");
-
     } catch (error) {
       console.error("Error submitting forms or uploading files:", error);
       toast({
         title: "An error occurred during submission.",
         variant: "destructive",
-      }); 
+      });
     }
   };
 
   const saveThumbnailToDb = async (data: any) => {
-    const response = await saveThumbnail(data);
-    if(response?.success === false){
-      toast({
-        title: response.message,
-        variant: "destructive"
-      })
-      return
-    }
+    await saveThumbnail(data);
     toast({
       title: "Thumbnail A successfully added",
-      className: "bg-green-600 text-slate-900"
-    })
+      className: "bg-green-600 text-slate-50",
+    });
   };
 
   const updateThumbnailInDb = async (data: any) => {
-    const response = await updateThumbnail(data);
-    if(response?.success === false){
-      toast({
-        title: response.message,
-        variant: "destructive"
-      })
-      return
-    }
+    await updateThumbnail(data);
     toast({
       title: "Thumbnail B successfully added",
-      className: "bg-green-600 text-slate-900"
-    })
+      className: "bg-green-600 text-slate-50",
+    });
   };
 
   return (
@@ -158,7 +141,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-center gap-32">
+              <div className="flex flex-col gap-12 md:flex-row md:items-center md:justify-center md:gap-32">
                 <div>
                   <h1 className="text-sm font-medium">Thumbnail (A)</h1>
                   <Form {...form1}>
@@ -170,7 +153,10 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
                         saveThumbnailToDb(res);
                       }}
                       onUploadError={(error: Error) => {
-                        alert(`ERROR! ${error.message}`);
+                        toast({
+                          title: error.message,
+                          variant: "destructive",
+                        });
                       }}
                       disabled={uploadCompleted1}
                     />
@@ -246,7 +232,10 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
                         updateThumbnailInDb(res);
                       }}
                       onUploadError={(error: Error) => {
-                        alert(`ERROR! ${error.message}`);
+                        toast({
+                          title: error.message,
+                          variant: "destructive",
+                        });
                       }}
                       disabled={uploadCompleted2}
                     />

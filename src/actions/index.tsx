@@ -4,11 +4,9 @@ import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { IChannelId, TUploadThingData, YoutubeData } from "@/types";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import cron from "node-cron";
+import schedule from "node-schedule"
 
 // GET ALL VIDEOS
-
-const { userId } = auth();
 
 export const getAllVideos = async () => {
   const { userId } = auth();
@@ -115,43 +113,35 @@ export const getOneVideo = async (videoId: string) => {
   }
 };
 
-// const task = cron.schedule(
-//   "*/2 * * * * *",
-//   () => {
-//     const now = new Date();
-//     const minutes = now.getMinutes();
-//     const seconds = now.getSeconds();
-//     console.log("Test started", minutes, seconds);
-//   },
-//   {
-//     scheduled: false,
-//   }
-// );
-
 const userTasks: any = {};
 
-// export const startUserTask = async (userId: any) => {
-//   const task = cron.schedule("*/2 * * * * *", () => {
-//     console.log(`Task running for user: ${userId}`);
-//   });
+export const startUserTask = async (userId: any) => {
 
-//   userTasks[userId] = task;
+  const user = await VideoTestModel.findOne({ userId });
 
-//   console.log(`Task started for user: ${userId}`);
-// };
+  if (!user || !user.testingInProgress) return;
 
-// export const stopUserTask = async (userId: any) => {
-//   if (userTasks[userId]) {
-//     userTasks[userId].stop();
-//     console.log(`Task stopped for user: ${userId}`);
+  const task = schedule.scheduleJob(Date.now() + 120000,
+    ()=> {
+      console.log(`Task running for user: ${userId}`)
+      task.cancel()
+      console.log("TASK STOPPED");
+      delete userTasks[userId]
+    }
+  );
+  
+  userTasks[userId] = task
+  
+  console.log(`Task started for user: ${userId}`);
 
-//     delete userTasks[userId];
-//   } else {
-//     console.log(`No task found for user: ${userId}`);
-//   }
-// };
+  console.log(userTasks);
+  
+};
 
 export const saveThumbnail = async (data: TUploadThingData) => {
+
+  const { userId } = auth();
+
   try {
     await connectToDb();
 
@@ -177,8 +167,6 @@ export const saveThumbnail = async (data: TUploadThingData) => {
       } catch (error) {
         console.log(error);
       }
-    } else if (userExists && userExists.testingInProgress) {
-      return { success: false, message: "Only one test per user is allowed" };
     }
   } catch (error) {
     console.log(error);
@@ -186,6 +174,9 @@ export const saveThumbnail = async (data: TUploadThingData) => {
 };
 
 export const updateThumbnail = async (data: TUploadThingData) => {
+
+  const { userId } = auth();
+
   try {
     await connectToDb();
 
@@ -194,7 +185,7 @@ export const updateThumbnail = async (data: TUploadThingData) => {
     if (!userExists) {
       try {
         await VideoTestModel.create({
-          thumbnailUrlA: data[0].url,
+          thumbnailUrlB: data[0].url,
           userId: userId,
         });
       } catch (error) {
@@ -211,8 +202,6 @@ export const updateThumbnail = async (data: TUploadThingData) => {
       } catch (error) {
         console.log(error);
       }
-    } else if (userExists && userExists.testingInProgress) {
-      return { success: false, message: "Only one test per user is allowed" };
     }
   } catch (error) {
     console.log(error);
@@ -220,6 +209,9 @@ export const updateThumbnail = async (data: TUploadThingData) => {
 };
 
 export const checkForThumbnailInDb = async () => {
+
+  const { userId } = auth();
+
   await connectToDb();
 
   try {
@@ -245,6 +237,9 @@ export const updateAndSaveFormOneToDb = async (data: {
   description: string;
   tags: string;
 }) => {
+
+  const { userId } = auth();
+
   await connectToDb();
 
   try {
@@ -259,54 +254,6 @@ export const updateAndSaveFormOneToDb = async (data: {
   } catch (error) {
     console.log(error);
   }
-
-  // if (!userId) {
-  //   return console.log("User not logged in");
-  // }
-
-  // const provider = "oauth_google";
-
-  // try {
-  //   const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
-  //     userId,
-  //     provider
-  //   );
-
-  //   const accessToken = clerkResponse.data[0].token;
-
-  //   const youtubeUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
-
-  //   const youtubeResponse = await fetch(youtubeUrl, {
-  //     method: "PUT",
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       id: "fCTOWh-8yOM",
-  //       snippet: {
-  //         categoryId: 20,
-  //         defaultLanguage: "en",
-  //         description: "Description changed using API",
-  //         title: "API requested changed in video",
-  //       },
-  //     }),
-  //   });
-
-  //   if (!youtubeResponse.ok) {
-  //     console.error(
-  //       `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
-  //     );
-  //     const errorText = await youtubeResponse.text();
-  //     console.error("YouTube API Error Response:", errorText);
-  //     return;
-  //   }
-
-  //   const youtubeVideoData = await youtubeResponse.json();
-  //   console.log(youtubeVideoData);
-  // } catch (error) {
-  //   console.log(error);
-  // }
 };
 
 export const updateAndSaveFormTwoToDb = async (data: {
@@ -314,6 +261,9 @@ export const updateAndSaveFormTwoToDb = async (data: {
   description: string;
   tags: string;
 }) => {
+
+  const { userId } = auth();
+
   await connectToDb();
 
   try {
@@ -330,15 +280,99 @@ export const updateAndSaveFormTwoToDb = async (data: {
   }
 };
 
-export const checkIfTestingInProgressIsTrue = async () => {
-  try {
-    await connectToDb()
+export const toggleTestingInProgess = async () => {
 
-    const user = await VideoTestModel.findOneAndUpdate({userId})
-    if(user?.testingInProgress){
-      return {success: false, message: "Only one test is allowed per user"}
+  const { userId } = auth();
+
+  try {
+    await connectToDb();
+
+    await VideoTestModel.findOneAndUpdate(
+      { userId },
+      {
+        testingInProgress: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const testOneInProgress = async (id: string) => {
+
+  const { userId } = auth();
+
+  await connectToDb();
+
+  const user = await VideoTestModel.findOne({ userId });
+
+  if (!userId || !user) {
+    return console.log("User not logged in");
+  }
+
+  const { titleA, descriptionA, tagsA, thumbnailUrlA } = user;
+
+  const provider = "oauth_google";
+
+  try {
+    const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
+      userId,
+      provider
+    );
+
+    const accessToken = clerkResponse.data[0].token;
+
+    const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
+
+    const youtubeResponse = await fetch(youtubeVideoUrl, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+        snippet: {
+          categoryId: 20,
+          defaultLanguage: "en",
+          description: descriptionA,
+          title: titleA,
+          tags: tagsA,
+        },
+      }),
+    });
+
+    const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${id}`;
+
+    const thumbnailResponse = await fetch(thumbnailUrlA);
+    const thumbnailBlob = await thumbnailResponse.blob();
+
+    const formData = new FormData();
+    formData.append("media", thumbnailBlob);
+
+    const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    if (!youtubeThumbnail.ok) {
+      return console.log(
+        `Youtube Api Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
+      );
+    }
+
+    if (!youtubeResponse.ok) {
+      console.error(
+        `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
+      );
+      const errorText = await youtubeResponse.text();
+      console.error("YouTube API Error Response:", errorText);
+      return;
     }
   } catch (error) {
-    console.error(error)
+    console.log(error);
   }
 };
