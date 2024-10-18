@@ -125,7 +125,7 @@ export const startUserTask = async (userId: string) => {
     ()=> {
       console.log(`Task running for user: ${userId}`)
       task.cancel()
-      console.log("TASK STOPPED");
+      alert(`Task stopped for user ${userId}`);
       delete userTasks[userId]
     }
   );
