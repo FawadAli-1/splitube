@@ -119,7 +119,7 @@ export const startUserTask = async (userId: string) => {
 
   const user = await VideoTestModel.findOne({ userId });
 
-  if (!user || !user.testingInProgress) return;
+  if (!user || !user.testingInProgress) return alert("Error occured");
 
   const task = schedule.scheduleJob(Date.now() + 120000,
     ()=> {
@@ -133,8 +133,6 @@ export const startUserTask = async (userId: string) => {
   userTasks[userId] = task
   
   console.log(`Task started for user: ${userId}`);
-
-  console.log(userTasks);
   
 };
 
