@@ -110,7 +110,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
     }
   };
 
-  const saveThumbnailToDb = async (data: any) => {
+  const saveThumbnailToDb = async (data) => {
     await saveThumbnail(data);
     toast({
       title: "Thumbnail A successfully added",
@@ -118,7 +118,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
     });
   };
 
-  const updateThumbnailInDb = async (data: any) => {
+  const updateThumbnailInDb = async (data) => {
     await updateThumbnail(data);
     toast({
       title: "Thumbnail B successfully added",
