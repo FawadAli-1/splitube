@@ -117,7 +117,13 @@ const userTasks = {};
 
 export const startUserTask = async (userId: string) => {
 
+  console.log("Started startUserTask function");
+  
+
   await connectToDb()
+
+  console.log("Connection to db established");
+  
 
   const user = await VideoTestModel.findOne({ userId });
 
@@ -190,6 +196,8 @@ export const startUserTask = async (userId: string) => {
       } catch (error) {
         console.log(error);
       }
+      console.log("This function ran");
+      
       task.cancel()
       console.log("TEst complete ");
       
