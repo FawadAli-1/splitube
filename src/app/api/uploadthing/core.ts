@@ -1,7 +1,9 @@
+import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { currentUser } from "@clerk/nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+export const maxDuration = 30
  
 const f = createUploadthing();
  
@@ -13,6 +15,7 @@ export const ourFileRouter = {
       if (!user) throw new UploadThingError("Unauthorized");
 
      try {
+      await connectToDb()
       const userExistsInDb = await VideoTestModel.findOne({userId: user?.id})
 
       if (userExistsInDb) {
