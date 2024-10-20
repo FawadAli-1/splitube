@@ -117,15 +117,82 @@ const userTasks = {};
 
 export const startUserTask = async (userId: string) => {
 
+  await connectToDb()
+
   const user = await VideoTestModel.findOne({ userId });
 
-  if (!user || !user.testingInProgress) return alert("Error occured");
+  if (!user || !user.testingInProgress) return console.log("No user");
+
+  const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId } = user;
+
+  const provider = "oauth_google";
 
   const task = schedule.scheduleJob(Date.now() + 120000,
-    ()=> {
-      console.log(`Task running for user: ${userId}`)
+    async()=> {
+      try {
+        const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
+          userId,
+          provider
+        );
+    
+        const accessToken = clerkResponse.data[0].token;
+    
+        const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
+    
+        const youtubeResponse = await fetch(youtubeVideoUrl, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: videoId,
+            snippet: {
+              categoryId: 20,
+              defaultLanguage: "en",
+              description: descriptionB,
+              title: titleB,
+              tags: tagsB,
+            },
+          }),
+        });
+    
+        const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
+    
+        const thumbnailResponse = await fetch(thumbnailUrlB);
+        const thumbnailBlob = await thumbnailResponse.blob();
+    
+        const formData = new FormData();
+        formData.append("media", thumbnailBlob);
+    
+        const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        });
+    
+        if (!youtubeThumbnail.ok) {
+          return console.log(
+            `Youtube Api Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
+          );
+        }
+    
+        if (!youtubeResponse.ok) {
+          console.error(
+            `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
+          );
+          const errorText = await youtubeResponse.text();
+          console.error("YouTube API Error Response:", errorText);
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
       task.cancel()
-      alert(`Task stopped for user ${userId}`);
+      console.log("TEst complete ");
+      
       delete userTasks[userId]
     }
   );
@@ -133,7 +200,6 @@ export const startUserTask = async (userId: string) => {
   userTasks[userId] = task
   
   console.log(`Task started for user: ${userId}`);
-  
 };
 
 export const saveThumbnail = async (data: TUploadThingData) => {
@@ -302,7 +368,9 @@ export const testOneInProgress = async (id: string) => {
 
   await connectToDb();
 
-  const user = await VideoTestModel.findOne({ userId });
+  const user = await VideoTestModel.findOneAndUpdate({ userId }, {
+    videoId: id
+  });
 
   if (!userId || !user) {
     return console.log("User not logged in");

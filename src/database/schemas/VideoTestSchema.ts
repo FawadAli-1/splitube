@@ -32,7 +32,8 @@ const VideoTestSchema = new Schema({
     testingInProgress: {
         type: Boolean,
         default: false
-    }
+    },
+    videoId: String
 })
 
 const VideoTestModel = models.VideoTestSchema || model("VideoTestSchema", VideoTestSchema);
