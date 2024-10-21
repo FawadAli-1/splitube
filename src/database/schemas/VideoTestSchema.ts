@@ -34,7 +34,7 @@ const VideoTestSchema = new Schema({
         default: false
     },
     videoId: String
-})
+}, {timestamps: true})
 
 const VideoTestModel = models.VideoTestSchema || model("VideoTestSchema", VideoTestSchema);
 

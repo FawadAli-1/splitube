@@ -6,7 +6,7 @@ import {
   checkForThumbnailInDb,
   getOneVideo,
   saveThumbnail,
-  startUserTask,
+  // startUserTask,
   testOneInProgress,
   toggleTestingInProgess,
   updateAndSaveFormOneToDb,
@@ -47,6 +47,19 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   const [uploadCompleted1, setUploadCompleted1] = useState(false);
   const [uploadCompleted2, setUploadCompleted2] = useState(false);
   const { toast } = useToast();
+
+  const startTask = async()=> {
+    const response = await fetch("/api/schedule-task", {
+      method: "POST"
+    })
+
+    const result = await response.json();
+    if (result.success) {
+      console.log(result.message);
+    } else {
+      console.error(result.message);
+    }
+  }
 
   useEffect(() => {
     const fetchVideoData = async () => {
@@ -97,7 +110,9 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
 
       await testOneInProgress(id)
 
-      await startUserTask(userId!)
+      await startTask()
+
+      // await startUserTask(userId!)
 
       form1.reset();
       form2.reset();

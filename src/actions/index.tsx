@@ -113,102 +113,102 @@ export const getOneVideo = async (videoId: string) => {
   }
 };
 
-const userTasks = {};
+// const userTasks = {};
 
-export const startUserTask = async (userId: string) => {
+// export const startUserTask = async (userId: string) => {
 
-  console.log("Started startUserTask function");
+//   console.log("Started startUserTask function");
   
 
-  await connectToDb()
+//   await connectToDb()
 
-  console.log("Connection to db established");
+//   console.log("Connection to db established");
   
 
-  const user = await VideoTestModel.findOne({ userId });
+//   const user = await VideoTestModel.findOne({ userId });
 
-  if (!user || !user.testingInProgress) return console.log("No user");
+//   if (!user || !user.testingInProgress) return console.log("No user");
 
-  const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId } = user;
+//   const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId } = user;
 
-  const provider = "oauth_google";
+//   const provider = "oauth_google";
 
-  const task = schedule.scheduleJob(Date.now() + 120000,
-    async()=> {
-      try {
-        const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
-          userId,
-          provider
-        );
+//   const task = schedule.scheduleJob(Date.now() + 120000,
+//     async()=> {
+//       try {
+//         const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
+//           userId,
+//           provider
+//         );
     
-        const accessToken = clerkResponse.data[0].token;
+//         const accessToken = clerkResponse.data[0].token;
     
-        const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
+//         const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
     
-        const youtubeResponse = await fetch(youtubeVideoUrl, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: videoId,
-            snippet: {
-              categoryId: 20,
-              defaultLanguage: "en",
-              description: descriptionB,
-              title: titleB,
-              tags: tagsB,
-            },
-          }),
-        });
+//         const youtubeResponse = await fetch(youtubeVideoUrl, {
+//           method: "PUT",
+//           headers: {
+//             Authorization: `Bearer ${accessToken}`,
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             id: videoId,
+//             snippet: {
+//               categoryId: 20,
+//               defaultLanguage: "en",
+//               description: descriptionB,
+//               title: titleB,
+//               tags: tagsB,
+//             },
+//           }),
+//         });
     
-        const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
+//         const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
     
-        const thumbnailResponse = await fetch(thumbnailUrlB);
-        const thumbnailBlob = await thumbnailResponse.blob();
+//         const thumbnailResponse = await fetch(thumbnailUrlB);
+//         const thumbnailBlob = await thumbnailResponse.blob();
     
-        const formData = new FormData();
-        formData.append("media", thumbnailBlob);
+//         const formData = new FormData();
+//         formData.append("media", thumbnailBlob);
     
-        const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
-        });
+//         const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
+//           method: "POST",
+//           headers: {
+//             Authorization: `Bearer ${accessToken}`,
+//           },
+//           body: formData,
+//         });
     
-        if (!youtubeThumbnail.ok) {
-          return console.log(
-            `Youtube Api Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
-          );
-        }
+//         if (!youtubeThumbnail.ok) {
+//           return console.log(
+//             `Youtube Api Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
+//           );
+//         }
     
-        if (!youtubeResponse.ok) {
-          console.error(
-            `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
-          );
-          const errorText = await youtubeResponse.text();
-          console.error("YouTube API Error Response:", errorText);
-          return;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      console.log("This function ran");
+//         if (!youtubeResponse.ok) {
+//           console.error(
+//             `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
+//           );
+//           const errorText = await youtubeResponse.text();
+//           console.error("YouTube API Error Response:", errorText);
+//           return;
+//         }
+//       } catch (error) {
+//         console.log(error);
+//       }
+//       console.log("This function ran");
       
-      task.cancel()
-      console.log("TEst complete ");
+//       task.cancel()
+//       console.log("TEst complete ");
       
-      delete userTasks[userId]
-    }
-  );
+//       delete userTasks[userId]
+//     }
+//   );
   
-  userTasks[userId] = task
+//   userTasks[userId] = task
   
-  console.log(`Task started for user: ${userId}`);
-};
+//   console.log(`Task started for user: ${userId}`);
+// };
 
 export const saveThumbnail = async (data: TUploadThingData) => {
 
