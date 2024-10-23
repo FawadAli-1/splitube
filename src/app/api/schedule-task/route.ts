@@ -1,8 +1,8 @@
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
-import { clerkClient } from "@clerk/nextjs/server"; // Don't use auth() since there's no user session
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
-export const POST = async (req) => {
+export const POST = async (req:Request) => {
   try {
     const cronToken = req.headers.get("x-cron-token");
     const expectedToken = process.env.CRON_SECRET_TOKEN;
@@ -16,16 +16,17 @@ export const POST = async (req) => {
         }
       );
     }
+    const { userId } = auth();
 
     await connectToDb();
 
-    const user = await VideoTestModel.findOne({ testingInProgress: true });
+    const user = await VideoTestModel.findOne({ userId });
 
-    if (!user) {
+    if (!user || !user.testingInProgress) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: "No task found",
+          message: "No task found for the user",
         }),
         {
           status: 404,
@@ -33,43 +34,84 @@ export const POST = async (req) => {
       );
     }
 
-    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted, userId } = user;
+    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted } =
+      user;
 
     const provider = "oauth_google";
 
     if (isCompleted) {
       try {
         const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
-          userId,
+          userId!,
           provider
         );
 
         const accessToken = clerkResponse.data[0].token;
 
-        // Your existing YouTube API logic here...
+        const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
 
-        console.log("Task execution completed");
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: `Task scheduled for user: ${userId}`,
+        const youtubeResponse = await fetch(youtubeVideoUrl, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: videoId,
+            snippet: {
+              categoryId: 20,
+              defaultLanguage: "en",
+              description: descriptionB,
+              title: titleB,
+              tags: tagsB,
+            },
           }),
-          {
-            status: 200,
-          }
-        );
+        });
+
+        const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
+
+        const thumbnailResponse = await fetch(thumbnailUrlB);
+        const thumbnailBlob = await thumbnailResponse.blob();
+
+        const formData = new FormData();
+        formData.append("media", thumbnailBlob);
+
+        const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        });
+
+        if (!youtubeThumbnail.ok) {
+          console.error(
+            `YouTube API Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
+          );
+          return;
+        }
+
+        if (!youtubeResponse.ok) {
+          console.error(
+            `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
+          );
+          const errorText = await youtubeResponse.text();
+          console.error("YouTube API Error Response:", errorText);
+          return;
+        }
       } catch (error) {
         console.log(error);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            message: "YouTube update failed",
-          }),
-          {
-            status: 500,
-          }
-        );
       }
+      console.log("Task execution completed");
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: `Task scheduled for user: ${userId}`,
+        }),
+        {
+          status: 200,
+        }
+      );
     } else {
       setTimeout(async () => {
         try {
