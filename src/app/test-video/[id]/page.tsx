@@ -42,7 +42,6 @@ import { useAuth } from "@clerk/nextjs";
 import { SendHorizonal } from "lucide-react";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
-  const {userId} = useAuth()
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);
   const [uploadCompleted1, setUploadCompleted1] = useState(false);
   const [uploadCompleted2, setUploadCompleted2] = useState(false);

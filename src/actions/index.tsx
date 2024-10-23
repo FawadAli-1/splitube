@@ -4,7 +4,6 @@ import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { IChannelId, TUploadThingData } from "@/types";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import schedule from "node-schedule"
 
 // GET ALL VIDEOS
 
