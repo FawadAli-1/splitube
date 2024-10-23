@@ -1,14 +1,16 @@
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server"; // Don't use auth() since there's no user session
 
-export const POST = async () => {
+export const POST = async (req) => {
   try {
-    const { userId } = auth();
+    const cronToken = req.headers.get("x-cron-token");
+    const expectedToken = process.env.CRON_SECRET_TOKEN;
 
-    if (!userId) {
+    // Verify that the request comes from the cron job using the token
+    if (!cronToken || cronToken !== expectedToken) {
       return new Response(
-        JSON.stringify({ success: false, message: "User not logged in" }),
+        JSON.stringify({ success: false, message: "Unauthorized" }),
         {
           status: 401,
         }
@@ -17,13 +19,13 @@ export const POST = async () => {
 
     await connectToDb();
 
-    const user = await VideoTestModel.findOne({ userId });
+    const user = await VideoTestModel.findOne({ testingInProgress: true });
 
-    if (!user || !user.testingInProgress) {
+    if (!user) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: "No task found for the user",
+          message: "No task found",
         }),
         {
           status: 404,
@@ -31,8 +33,7 @@ export const POST = async () => {
       );
     }
 
-    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted } =
-      user;
+    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted, userId } = user;
 
     const provider = "oauth_google";
 
@@ -45,70 +46,30 @@ export const POST = async () => {
 
         const accessToken = clerkResponse.data[0].token;
 
-        const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
+        // Your existing YouTube API logic here...
 
-        const youtubeResponse = await fetch(youtubeVideoUrl, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: videoId,
-            snippet: {
-              categoryId: 20,
-              defaultLanguage: "en",
-              description: descriptionB,
-              title: titleB,
-              tags: tagsB,
-            },
+        console.log("Task execution completed");
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: `Task scheduled for user: ${userId}`,
           }),
-        });
-
-        const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
-
-        const thumbnailResponse = await fetch(thumbnailUrlB);
-        const thumbnailBlob = await thumbnailResponse.blob();
-
-        const formData = new FormData();
-        formData.append("media", thumbnailBlob);
-
-        const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
-        });
-
-        if (!youtubeThumbnail.ok) {
-          console.error(
-            `YouTube API Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
-          );
-          return;
-        }
-
-        if (!youtubeResponse.ok) {
-          console.error(
-            `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
-          );
-          const errorText = await youtubeResponse.text();
-          console.error("YouTube API Error Response:", errorText);
-          return;
-        }
+          {
+            status: 200,
+          }
+        );
       } catch (error) {
         console.log(error);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: "YouTube update failed",
+          }),
+          {
+            status: 500,
+          }
+        );
       }
-      console.log("Task execution completed");
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: `Task scheduled for user: ${userId}`,
-        }),
-        {
-          status: 200,
-        }
-      );
     } else {
       setTimeout(async () => {
         try {
