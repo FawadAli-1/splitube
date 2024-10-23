@@ -33,7 +33,11 @@ const VideoTestSchema = new Schema({
         type: Boolean,
         default: false
     },
-    videoId: String
+    videoId: String,
+    isCompleted: {
+        type: Boolean,
+        default: true
+    }
 }, {timestamps: true})
 
 const VideoTestModel = models.VideoTestSchema || model("VideoTestSchema", VideoTestSchema);

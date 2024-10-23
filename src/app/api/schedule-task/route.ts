@@ -1,19 +1,18 @@
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { NextRequest } from "next/server";
-import schedule from "node-schedule";
 
-const userTasks = {}; 
-
-export const POST = async (req: NextRequest) => {
+export const POST = async () => {
   try {
     const { userId } = auth();
 
     if (!userId) {
-      return new Response(JSON.stringify({ success: false, message: "User not logged in" }), {
-        status: 401,
-      });
+      return new Response(
+        JSON.stringify({ success: false, message: "User not logged in" }),
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectToDb();
@@ -21,16 +20,23 @@ export const POST = async (req: NextRequest) => {
     const user = await VideoTestModel.findOne({ userId });
 
     if (!user || !user.testingInProgress) {
-      return new Response(JSON.stringify({ success: false, message: "No task found for the user" }), {
-        status: 404,
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "No task found for the user",
+        }),
+        {
+          status: 404,
+        }
+      );
     }
 
-    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId } = user;
+    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted } =
+      user;
 
     const provider = "oauth_google";
 
-    const task = schedule.scheduleJob(Date.now() + 120000, async () => {
+    if (isCompleted) {
       try {
         const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
           userId,
@@ -93,21 +99,43 @@ export const POST = async (req: NextRequest) => {
       } catch (error) {
         console.log(error);
       }
-
       console.log("Task execution completed");
-      task.cancel(); // Cancel the task once it has run
-      delete userTasks[userId]; // Remove the task from the tracking object
-    });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: `Task scheduled for user: ${userId}`,
+        }),
+        {
+          status: 200,
+        }
+      );
+    } else {
+      setTimeout(async () => {
+        try {
+          await VideoTestModel.updateOne({ userId }, { isCompleted: true });
+          console.log("isCompleted set to true for user:", userId);
+        } catch (error) {
+          console.error("Failed to update isCompleted:", error);
+        }
+      }, 120000);
 
-    userTasks[userId] = task; // Track the task
-
-    return new Response(JSON.stringify({ success: true, message: `Task scheduled for user: ${userId}` }), {
-      status: 200,
-    });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: `Task scheduled to be completed for user: ${userId} in 2 minutes`,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
   } catch (error) {
     console.log(error);
-    return new Response(JSON.stringify({ success: false, message: "Failed to schedule task" }), {
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ success: false, message: "Failed to schedule task" }),
+      {
+        status: 500,
+      }
+    );
   }
 };
