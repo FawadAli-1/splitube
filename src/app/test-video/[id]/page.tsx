@@ -38,7 +38,6 @@ import {
 } from "@/components/ui/card";
 
 import { UploadDropzone } from "@/utils/uploadthing";
-import { useAuth } from "@clerk/nextjs";
 import { SendHorizonal } from "lucide-react";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
