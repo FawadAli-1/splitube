@@ -36,7 +36,7 @@ const VideoTestSchema = new Schema({
     videoId: String,
     isCompleted: {
         type: Boolean,
-        default: true
+        default: false
     }
 }, {timestamps: true})
 
