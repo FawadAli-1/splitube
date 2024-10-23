@@ -23,15 +23,7 @@ export const POST = async (req:Request) => {
     const user = await VideoTestModel.findOne({ userId });
 
     if (!user || !user.testingInProgress) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: "No task found for the user",
-        }),
-        {
-          status: 404,
-        }
-      );
+      return console.log("No user or testing in progress is false");
     }
 
     const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted } =
