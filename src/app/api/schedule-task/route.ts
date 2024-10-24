@@ -1,6 +1,6 @@
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export const POST = async (req: Request) => {
   try {
