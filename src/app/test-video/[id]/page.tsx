@@ -6,7 +6,6 @@ import {
   checkForThumbnailInDb,
   getOneVideo,
   saveThumbnail,
-  // startUserTask,
   testOneInProgress,
   toggleTestingInProgess,
   updateAndSaveFormOneToDb,
@@ -48,7 +47,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
 
   const startTask = async()=> {
     const response = await fetch("/api/schedule-task", {
-      method: "POST"
+      method: "POST",
     })
 
     const result = await response.json();

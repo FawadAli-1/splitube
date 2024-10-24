@@ -388,6 +388,10 @@ export const testOneInProgress = async (id: string) => {
   const provider = "oauth_google";
 
   try {
+
+    user.executeAt = Date.now() + 120000
+    await user.save()
+
     const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
       userId,
       provider

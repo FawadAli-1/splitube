@@ -2,8 +2,11 @@ import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
-export const POST = async (req:Request) => {
+export const POST = async(req: Request)=> {
+  
   try {
+    const authUser = auth()
+    const {userId} = authUser
     const cronToken = req.headers.get("x-cron-token");
     const expectedToken = process.env.CRON_SECRET_TOKEN;
 
@@ -16,22 +19,29 @@ export const POST = async (req:Request) => {
         }
       );
     }
-    const { userId } = auth();
 
     await connectToDb();
 
     const user = await VideoTestModel.findOne({ userId });
 
     if (!user || !user.testingInProgress) {
-      return console.log("No user or testing in progress is false");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "No task found for the user",
+        }),
+        {
+          status: 404,
+        }
+      );
     }
 
-    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, isCompleted } =
+    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, executeAt } =
       user;
 
     const provider = "oauth_google";
 
-    if (isCompleted) {
+    if (Date.now() >= executeAt) {
       try {
         const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
           userId!,
@@ -94,36 +104,16 @@ export const POST = async (req:Request) => {
       } catch (error) {
         console.log(error);
       }
-      console.log("Task execution completed");
       return new Response(
         JSON.stringify({
           success: true,
-          message: `Task scheduled for user: ${userId}`,
+          message: `Scheduled task executed for user ${userId}`,
         }),
         {
           status: 200,
         }
       );
-    } else {
-      setTimeout(async () => {
-        try {
-          await VideoTestModel.updateOne({ userId }, { isCompleted: true });
-          console.log("isCompleted set to true for user:", userId);
-        } catch (error) {
-          console.error("Failed to update isCompleted:", error);
-        }
-      }, 120000);
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: `Task scheduled to be completed for user: ${userId} in 2 minutes`,
-        }),
-        {
-          status: 200,
-        }
-      );
-    }
+    } 
   } catch (error) {
     console.log(error);
     return new Response(
@@ -134,3 +124,4 @@ export const POST = async (req:Request) => {
     );
   }
 };
+
