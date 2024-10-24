@@ -19,10 +19,11 @@ export const ourFileRouter = {
       const userExistsInDb = await VideoTestModel.findOne({userId: user?.id})
 
       if (userExistsInDb && userExistsInDb.testingInProgress === true) {
-        throw new UploadThingError("Only one test allowed per user");
+        throw new UploadThingError("Only one test allowed per user")
       }
      } catch (error) {
       console.log(error);
+      throw error
      }
  
       return { userId: user?.id };
