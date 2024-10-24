@@ -123,33 +123,19 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   };
 
   const saveThumbnailToDb = async (data) => {
-    const response = await saveThumbnail(data);
-    if(response?.success){
-      toast({
-        title: response.message,
-        className: "bg-green-600 text-slate-50",
-      });
-    }else{
-      toast({
-        title: response?.message,
-        className: "bg-red-600 text-slate-50",
-      })
-    }
+    await saveThumbnail(data);
+    toast({
+      title: "Thumbnail A successfully added",
+      className: "bg-green-600 text-slate-50",
+    });
   };
 
   const updateThumbnailInDb = async (data) => {
-    const response = await saveThumbnail(data);
-    if(response?.success){
-      toast({
-        title: response.message,
-        className: "bg-green-600 text-slate-50",
-      });
-    }else{
-      toast({
-        title: response?.message,
-        className: "bg-red-600 text-slate-50",
-      })
-    }
+    await updateThumbnail(data);
+    toast({
+      title: "Thumbnail B successfully added",
+      className: "bg-green-600 text-slate-50",
+    });
   };
 
   return (

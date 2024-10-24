@@ -216,7 +216,7 @@ export const saveThumbnail = async (data: TUploadThingData) => {
   try {
     await connectToDb();
 
-    const userExists = await VideoTestModel.findOne({ userId });
+    const userExists = await VideoTestModel.findOne({ userId: userId });
 
     if (!userExists) {
       try {
@@ -224,10 +224,6 @@ export const saveThumbnail = async (data: TUploadThingData) => {
           thumbnailUrlA: data[0].url,
           userId: userId,
         });
-        return {
-          success: true,
-          message: "Thumbnail added to new document in database"
-        }
       } catch (error) {
         console.log(error);
       }
@@ -239,16 +235,9 @@ export const saveThumbnail = async (data: TUploadThingData) => {
             thumbnailUrlA: data[0].url,
           }
         );
-        return {
-          success: true,
-          message: "Thumbnail updated in database"
-        }
       } catch (error) {
         console.log(error);
       }
-    }else if(userExists && userExists.testingInProgress) return {
-      success: false,
-      message: "Cannot add thumbnail. You are already testing."
     }
   } catch (error) {
     console.log(error);
@@ -270,10 +259,6 @@ export const updateThumbnail = async (data: TUploadThingData) => {
           thumbnailUrlB: data[0].url,
           userId: userId,
         });
-        return {
-          success: true,
-          message: "Thumbnail added to new document in database"
-        }
       } catch (error) {
         console.log(error);
       }
@@ -285,16 +270,9 @@ export const updateThumbnail = async (data: TUploadThingData) => {
             thumbnailUrlB: data[0].url,
           }
         );
-        return {
-          success: true,
-          message: "Thumbnail updated in database"
-        }
       } catch (error) {
         console.log(error);
       }
-    }else if(userExists && userExists.testingInProgress) return {
-      success: false,
-      message: "Cannot add thumbnail. You are already testing."
     }
   } catch (error) {
     console.log(error);
