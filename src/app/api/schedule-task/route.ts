@@ -2,11 +2,8 @@ import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
-export const POST = async(req: Request)=> {
-  
+export const POST = async (req: Request) => {
   try {
-    const authUser = auth()
-    const {userId} = authUser
     const cronToken = req.headers.get("x-cron-token");
     const expectedToken = process.env.CRON_SECRET_TOKEN;
 
@@ -22,13 +19,16 @@ export const POST = async(req: Request)=> {
 
     await connectToDb();
 
-    const user = await VideoTestModel.findOne({ userId });
+    const users = await VideoTestModel.find({
+      testingInProgress: true,
+      executeAt: { $lte: Date.now() },
+    });
 
-    if (!user || !user.testingInProgress) {
+    if (users.length === 0) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: "No task found for the user",
+          message: "No tasks found for execution",
         }),
         {
           status: 404,
@@ -36,84 +36,87 @@ export const POST = async(req: Request)=> {
       );
     }
 
-    const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, executeAt } =
-      user;
+    for (const user of users) {
+      const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, executeAt, userId } =
+        user;
 
-    const provider = "oauth_google";
+      const provider = "oauth_google";
 
-    if (Date.now() >= executeAt) {
-      try {
-        const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
-          userId!,
-          provider
-        );
+      if (Date.now() >= executeAt) {
+        try {
+          const clerkResponse =
+            await clerkClient().users.getUserOauthAccessToken(
+              userId!,
+              provider
+            );
 
-        const accessToken = clerkResponse.data[0].token;
+          const accessToken = clerkResponse.data[0].token;
 
-        const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
+          const youtubeVideoUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics`;
 
-        const youtubeResponse = await fetch(youtubeVideoUrl, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: videoId,
-            snippet: {
-              categoryId: 20,
-              defaultLanguage: "en",
-              description: descriptionB,
-              title: titleB,
-              tags: tagsB,
+          const youtubeResponse = await fetch(youtubeVideoUrl, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
             },
+            body: JSON.stringify({
+              id: videoId,
+              snippet: {
+                categoryId: 20,
+                defaultLanguage: "en",
+                description: descriptionB,
+                title: titleB,
+                tags: tagsB,
+              },
+            }),
+          });
+
+          const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
+
+          const thumbnailResponse = await fetch(thumbnailUrlB);
+          const thumbnailBlob = await thumbnailResponse.blob();
+
+          const formData = new FormData();
+          formData.append("media", thumbnailBlob);
+
+          const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: formData,
+          });
+
+          if (!youtubeThumbnail.ok) {
+            console.error(
+              `YouTube API Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
+            );
+            return;
+          }
+
+          if (!youtubeResponse.ok) {
+            console.error(
+              `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
+            );
+            const errorText = await youtubeResponse.text();
+            console.error("YouTube API Error Response:", errorText);
+            return;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: `Scheduled task executed for user ${userId}`,
           }),
-        });
-
-        const youtubeThumbnailUrl = `https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`;
-
-        const thumbnailResponse = await fetch(thumbnailUrlB);
-        const thumbnailBlob = await thumbnailResponse.blob();
-
-        const formData = new FormData();
-        formData.append("media", thumbnailBlob);
-
-        const youtubeThumbnail = await fetch(youtubeThumbnailUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
-        });
-
-        if (!youtubeThumbnail.ok) {
-          console.error(
-            `YouTube API Error: ${youtubeThumbnail.status} - ${youtubeThumbnail.statusText}`
-          );
-          return;
-        }
-
-        if (!youtubeResponse.ok) {
-          console.error(
-            `YouTube API Error: ${youtubeResponse.status} - ${youtubeResponse.statusText}`
-          );
-          const errorText = await youtubeResponse.text();
-          console.error("YouTube API Error Response:", errorText);
-          return;
-        }
-      } catch (error) {
-        console.log(error);
+          {
+            status: 200,
+          }
+        );
       }
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: `Scheduled task executed for user ${userId}`,
-        }),
-        {
-          status: 200,
-        }
-      );
-    } 
+    }
   } catch (error) {
     console.log(error);
     return new Response(
@@ -124,4 +127,3 @@ export const POST = async(req: Request)=> {
     );
   }
 };
-
