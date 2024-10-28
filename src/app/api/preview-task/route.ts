@@ -39,7 +39,7 @@ export const GET = async () => {
     const endDateForTestOne = formatDateToYYYYMMDD(executeAt);
     const startDateForTestOne = getThreeDaysBefore(executeAt);
 
-    const youtubeAnalyticsTestA = `https://youtubeanalytics.googleapis.com/v2/reports?ids=channel==MINE&endDate=${endDateForTestOne}&startDate=${startDateForTestOne}&metrics=likes,subscribersGained,viewerPercentage,views,estimatedMinutesWatched,averageViewDuration`;
+    const youtubeAnalyticsTestA = `https://youtubeanalytics.googleapis.com/v2/reports?ids=channel==MINE&endDate=${endDateForTestOne}&startDate=${startDateForTestOne}&metrics=likes,subscribersGained,averageViewPercentage,views,estimatedMinutesWatched,averageViewDuration`;
 
     const youtubeTestOneResponse = await fetch(youtubeAnalyticsTestA, {
       method: "GET",

@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { splittestSchema } from "@/schema";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -37,7 +37,9 @@ import {
 } from "@/components/ui/card";
 
 import { UploadDropzone } from "@/utils/uploadthing";
-import { Loader, SendHorizonal } from "lucide-react";
+import { Link, Loader, SendHorizonal } from "lucide-react";
+import { ToastAction } from "@radix-ui/react-toast";
+import { cn } from "@/lib/utils";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);
@@ -117,6 +119,18 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
       form1.reset();
       form2.reset();
       setLoading(false);
+      toast({
+        title: `Testing started on video ${id}`,
+        description: "Click here to preview test",
+        className: "bg-green-600 text-slate-50",
+        action: (
+          <ToastAction altText="Preview Video">
+            <Link className={cn(buttonVariants())} href={`/preview-test/${id}`}>
+              Preview Video
+            </Link>
+          </ToastAction>
+        ),
+      });
     } catch (error) {
       console.error("Error submitting forms or uploading files:", error);
       toast({
@@ -330,7 +344,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
                     onClick={onSubmitBothFormsAndUpload}
                     disabled={loading}
                   >
-                    Loading <Loader className="size-4" />
+                    Loading <Loader className="size-4 animate-spin" />
                   </Button>
                 )}
               </CardFooter>
