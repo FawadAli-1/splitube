@@ -37,18 +37,19 @@ import {
 } from "@/components/ui/card";
 
 import { UploadDropzone } from "@/utils/uploadthing";
-import { SendHorizonal } from "lucide-react";
+import { Loader, SendHorizonal } from "lucide-react";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);
   const [uploadCompleted1, setUploadCompleted1] = useState(false);
   const [uploadCompleted2, setUploadCompleted2] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const startTask = async()=> {
+  const startTask = async () => {
     const response = await fetch("/api/schedule-task", {
       method: "POST",
-    })
+    });
 
     const result = await response.json();
     if (result.success) {
@@ -56,7 +57,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
     } else {
       console.error(result.message);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchVideoData = async () => {
@@ -89,12 +90,14 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
 
   const onSubmitBothFormsAndUpload = async () => {
     try {
+      setLoading(true);
       const response = await checkForThumbnailInDb();
       if (!response?.success) {
         toast({
           title: response?.message,
           variant: "destructive",
         });
+        setLoading(false);
         return;
       }
 
@@ -105,14 +108,15 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
 
       await toggleTestingInProgess();
 
-      await testOneInProgress(id)
+      await testOneInProgress(id);
 
-      await startTask()
+      await startTask();
 
       // await startUserTask(userId!)
 
       form1.reset();
       form2.reset();
+      setLoading(false);
     } catch (error) {
       console.error("Error submitting forms or uploading files:", error);
       toast({
@@ -312,12 +316,23 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
                 </div>
               </div>
               <CardFooter className="flex items-center justify-center mt-8">
-                <Button
-                  className="flex items-center gap-2"
-                  onClick={onSubmitBothFormsAndUpload}
-                >
-                  Submit <SendHorizonal className="size-4" />
-                </Button>
+                {!loading ? (
+                  <Button
+                    className="flex items-center gap-2"
+                    onClick={onSubmitBothFormsAndUpload}
+                    disabled={loading}
+                  >
+                    Submit <SendHorizonal className="size-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    className="flex items-center gap-2"
+                    onClick={onSubmitBothFormsAndUpload}
+                    disabled={loading}
+                  >
+                    Loading <Loader className="size-4" />
+                  </Button>
+                )}
               </CardFooter>
             </CardContent>
           </Card>

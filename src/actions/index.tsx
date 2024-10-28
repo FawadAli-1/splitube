@@ -112,8 +112,6 @@ export const getOneVideo = async (videoId: string) => {
   }
 };
 
-// const userTasks = {};
-
 // export const startUserTask = async (userId: string) => {
 
 //   console.log("Started startUserTask function");

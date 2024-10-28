@@ -103,6 +103,7 @@ export const POST = async (req: Request) => {
             console.error("YouTube API Error Response:", errorText);
             return;
           }
+
         } catch (error) {
           console.log(error);
         }
