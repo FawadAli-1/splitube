@@ -386,8 +386,7 @@ export const testOneInProgress = async (id: string) => {
   const provider = "oauth_google";
 
   try {
-
-    user.executeAt = Date.now() + 120000
+    user.executeAt = Date.now() + 3 * 24 * 60 * 60 * 1000
     await user.save()
 
     const clerkResponse = await clerkClient().users.getUserOauthAccessToken(
@@ -451,3 +450,20 @@ export const testOneInProgress = async (id: string) => {
     console.log(error);
   }
 };
+
+export const deleteTestResult =async()=> {
+  
+  try {
+    const {userId} = auth()
+    if(!userId) return {success: false, message: "User is not logged in"}
+    await connectToDb()
+    
+    const user = await VideoTestModel.findOne({userId})
+    if(!user) return {success: false, message: "User does not exist"}
+      await VideoTestModel.findOneAndDelete({userId})
+      return {success: true, message: "Successfully deleted"}
+
+  } catch (error) {
+    console.log(error);
+  }
+}

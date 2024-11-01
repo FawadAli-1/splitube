@@ -17,8 +17,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
-import { Button } from "../ui/button";
-import { LogIn } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
+import { ListCheck, LogIn } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   return (
@@ -38,14 +39,15 @@ const Navbar = () => {
         <div className="md:hidden mx-4">
           <SignedOut>
             <Button>
-              <SignInButton/>
+              <SignInButton />
             </Button>
           </SignedOut>
         </div>
         <div className="hidden md:flex md:mx-4">
           <SignedOut>
             <Button className="flex items-center gap-1">
-              <SignInButton /><LogIn className="size-5"/>
+              <SignInButton />
+              <LogIn className="size-5" />
             </Button>
           </SignedOut>
         </div>
@@ -68,10 +70,21 @@ const Navbar = () => {
                   </SheetTitle>
                 </SheetHeader>
                 <SheetDescription className="flex items-start flex-col gap-4">
-                  <h3>About</h3>
-                  <h3>Newsletter</h3>
+                  <Link href={'/'}>Home</Link>
                   <h3>Blogs</h3>
                   <h3>Products</h3>
+                  <Link
+                    className={`${cn(
+                      buttonVariants({
+                        className:
+                          "bg-green-600 hover:bg-green-600 hover:opacity-90",
+                      })
+                    )} hover:opacity-90 flex items-center justify-center gap-2`}
+                    href={"/preview-test"}
+                  >
+                    <ListCheck className="size-5" />
+                    Preview Tests
+                  </Link>
                   <Button variant={"destructive"}>
                     <SignOutButton />
                   </Button>
@@ -86,7 +99,21 @@ const Navbar = () => {
         {/* Medium to large screen signed in button  */}
         <div className="md:flex items-center gap-2 font-medium hidden">
           <SignedIn>
-            <UserButton showName />
+            <nav className="flex items-center justify-around gap-4">
+              <Link
+                className={`${cn(
+                  buttonVariants({
+                    className:
+                      "bg-green-600 hover:bg-green-600 hover:opacity-90",
+                  })
+                )} hover:opacity-90 flex items-center justify-center gap-2`}
+                href={"/preview-test"}
+              >
+                <ListCheck className="size-5" />
+                Preview Tests
+              </Link>
+              <UserButton showName />
+            </nav>
           </SignedIn>
         </div>
         {/* Medium to large screen signed in button  */}

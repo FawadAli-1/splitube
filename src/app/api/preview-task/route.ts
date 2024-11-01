@@ -23,35 +23,45 @@ export const GET = async () => {
 
     const { executeAt } = user;
 
-    const formatDateToYYYYMMDD = (date: Date) => {
+    const formatDateToYYYYMMDD = (date:Date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     };
 
-    const getThreeDaysBefore = (date: Date) => {
-      const threeDaysBefore = new Date(date);
-      threeDaysBefore.setDate(date.getDate() - 3);
-      return formatDateToYYYYMMDD(threeDaysBefore);
+    const getDateRange = (date : Date, offsetDays : number) => {
+      const adjustedDate = new Date(date);
+      adjustedDate.setDate(date.getDate() - offsetDays);
+      return formatDateToYYYYMMDD(adjustedDate);
     };
 
+    // Define date ranges for the two analytics calls
+    const startDateForTestOne = getDateRange(executeAt, 3);
     const endDateForTestOne = formatDateToYYYYMMDD(executeAt);
-    const startDateForTestOne = getThreeDaysBefore(executeAt);
 
-    const youtubeAnalyticsTestA = `https://youtubeanalytics.googleapis.com/v2/reports?ids=channel==MINE&endDate=${endDateForTestOne}&startDate=${startDateForTestOne}&metrics=likes,subscribersGained,averageViewPercentage,views,estimatedMinutesWatched,averageViewDuration`;
+    const startDateForTestTwo = getDateRange(executeAt, 7);
+    const endDateForTestTwo = getDateRange(executeAt, 4);
 
-    const youtubeTestOneResponse = await fetch(youtubeAnalyticsTestA, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const fetchYouTubeAnalytics = async (startDate : string, endDate: string) => {
+      const url = `https://youtubeanalytics.googleapis.com/v2/reports?ids=channel==MINE&endDate=${endDate}&startDate=${startDate}&metrics=likes,subscribersGained,averageViewPercentage,views,estimatedMinutesWatched,averageViewDuration`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.json();
+    };
 
-    const youtubeTestOne = await youtubeTestOneResponse.json();
+    // Call analytics with two different date ranges
+    const [youtubeTestOne, youtubeTestTwo] = await Promise.all([
+      fetchYouTubeAnalytics(startDateForTestOne, endDateForTestOne),
+      fetchYouTubeAnalytics(startDateForTestTwo, endDateForTestTwo),
+    ]);
 
     return new Response(
-      JSON.stringify(youtubeTestOne),
+      JSON.stringify({ youtubeTestOne, youtubeTestTwo }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
 

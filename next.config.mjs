@@ -15,6 +15,11 @@ const nextConfig = {
                 hostname: "i9.ytimg.com",
                 port: ""
             },
+            {
+                protocol: "https",
+                hostname: "utfs.io",
+                port: ""
+            },
         ]
     }
 };

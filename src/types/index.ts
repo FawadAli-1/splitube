@@ -101,3 +101,26 @@ type UploadThingData = {
 }
 
 export type TUploadThingData = UploadThingData[]
+
+type columnHeaders = {
+    columnType: string,
+    dataType: string,
+    name: string
+}
+
+type rows = [
+    number
+]
+
+export type YoutubeVideoAnalytics = {
+    youtubeTestOne: {
+        columnHeaders: columnHeaders[],
+        kind: string,
+        rows: rows[]
+    },
+    youtubeTestTwo: {
+        columnHeaders: columnHeaders[],
+        kind: string,
+        rows: rows[]
+    },
+}

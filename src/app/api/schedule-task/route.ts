@@ -37,13 +37,23 @@ export const POST = async (req: Request) => {
     }
 
     for (const user of users) {
-      const { titleB, descriptionB, tagsB, thumbnailUrlB, videoId, executeAt, userId } =
-        user;
+      const {
+        titleB,
+        descriptionB,
+        tagsB,
+        thumbnailUrlB,
+        videoId,
+        executeAt,
+        userId,
+      } = user;
+      let { isCompleted } = user;
 
       const provider = "oauth_google";
 
       if (Date.now() >= executeAt) {
         try {
+          isCompleted = true;
+          user.save();
           const clerkResponse =
             await clerkClient().users.getUserOauthAccessToken(
               userId!,
@@ -103,7 +113,6 @@ export const POST = async (req: Request) => {
             console.error("YouTube API Error Response:", errorText);
             return;
           }
-
         } catch (error) {
           console.log(error);
         }

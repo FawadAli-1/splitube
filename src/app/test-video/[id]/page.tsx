@@ -121,15 +121,8 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
       setLoading(false);
       toast({
         title: `Testing started on video ${id}`,
-        description: "Click here to preview test",
+        description: "Check 'Preview Tests' to get details",
         className: "bg-green-600 text-slate-50",
-        action: (
-          <ToastAction altText="Preview Video">
-            <Link className={cn(buttonVariants())} href={`/preview-test/${id}`}>
-              Preview Video
-            </Link>
-          </ToastAction>
-        ),
       });
     } catch (error) {
       console.error("Error submitting forms or uploading files:", error);
