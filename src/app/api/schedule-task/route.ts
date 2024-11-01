@@ -27,11 +27,11 @@ export const POST = async (req: Request) => {
     if (users.length === 0) {
       return new Response(
         JSON.stringify({
-          success: false,
+          success: true,
           message: "No tasks found for execution",
         }),
         {
-          status: 404,
+          status: 200,
         }
       );
     }
