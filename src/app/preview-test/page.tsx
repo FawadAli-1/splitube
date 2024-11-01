@@ -36,8 +36,7 @@ const PreviewTestPage = async () => {
       titleB,
       descriptionB,
       thumbnailUrlB,
-      tagsB,
-      isCompleted
+      tagsB
     }: {
       videoId: string;
       titleA: string;
@@ -50,7 +49,6 @@ const PreviewTestPage = async () => {
       tagsB: string;
       updatedAt: Date;
       executeAt: Date;
-      isCompleted: boolean
     } = user;
 
     return (
