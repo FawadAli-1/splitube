@@ -69,7 +69,7 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
     return <div>{error}</div>;
   }
 
-  if (!completed) return <p>No results, wait till test is finished.</p>;
+  if (completed === false) return <p>No results, wait till test is finished.</p>;
 
   return (
     <section className="flex flex-col gap-8">
