@@ -18,15 +18,19 @@ import { useAuth } from "@clerk/nextjs";
 const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [completed, setCompleted] = useState(false)
+  const [completed, setCompleted] = useState(false);
   const [data, setData] = useState<YoutubeVideoAnalytics | null>(null);
   const { userId } = useAuth();
 
   const checkIfUserIsCompleted = async () => {
-    await connectToDb();
-    const user = await VideoTestModel.findOne({ userId });
-    const { isCompleted } = user;
-    setCompleted(isCompleted)
+    try {
+      await connectToDb();
+      const user = await VideoTestModel.findOne({ userId });
+      const { isCompleted } = user;
+      setCompleted(isCompleted);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -54,7 +58,6 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
     checkIfUserIsCompleted();
   }, []);
   if (loading) {
-    <div></div>;
     return (
       <div className="flex items-center justify-center">
         <Loader className="animate-spin" />
