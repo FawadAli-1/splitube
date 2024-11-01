@@ -46,14 +46,12 @@ export const POST = async (req: Request) => {
         executeAt,
         userId,
       } = user;
-      let { isCompleted } = user;
-
+      
       const provider = "oauth_google";
-
+      
       if (Date.now() >= executeAt) {
         try {
-          isCompleted = true;
-          user.save();
+          await VideoTestModel.findOneAndUpdate({userId}, {isCompleted: true})
           const clerkResponse =
             await clerkClient().users.getUserOauthAccessToken(
               userId!,

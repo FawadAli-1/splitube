@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { splittestSchema } from "@/schema";
 import { z } from "zod";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -37,9 +37,7 @@ import {
 } from "@/components/ui/card";
 
 import { UploadDropzone } from "@/utils/uploadthing";
-import { Link, Loader, SendHorizonal } from "lucide-react";
-import { ToastAction } from "@radix-ui/react-toast";
-import { cn } from "@/lib/utils";
+import { Loader, SendHorizonal } from "lucide-react";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);

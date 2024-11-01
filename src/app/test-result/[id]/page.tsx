@@ -69,17 +69,17 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
           <TableRow>
             <TableCell className="font-medium capitalize">
               {data?.youtubeTestOne.columnHeaders.map((item) => (
-                <p className="py-2">{item.name}</p>
+                <p className="py-2" key={item.name}>{item.name}</p>
               ))}
             </TableCell>
             <TableCell className="font-medium">
               {data?.youtubeTestOne.rows[0].map((item) => (
-                <p className="py-2">{item}</p>
+                <p className="py-2" key={item}>{item}</p>
               ))}
             </TableCell>
             <TableCell className="font-medium">
               {data?.youtubeTestTwo.rows[0].map((item) => (
-                <p className="py-2">{item}</p>
+                <p className="py-2" key={item}>{item}</p>
               ))}
             </TableCell>
           </TableRow>
