@@ -52,7 +52,6 @@ const PreviewTestPage = async () => {
       executeAt: Date;
       isCompleted: boolean
     } = user;
-    if(!isCompleted) return <p>No results, wait till test is finished.</p>
 
     return (
       <section>

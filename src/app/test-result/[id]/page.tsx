@@ -11,11 +11,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { connectToDb } from "@/database";
+import VideoTestModel from "@/database/schemas/VideoTestSchema";
+import { useAuth } from "@clerk/nextjs";
 
 const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [completed, setCompleted] = useState(false)
   const [data, setData] = useState<YoutubeVideoAnalytics | null>(null);
+  const { userId } = useAuth();
+
+  const checkIfUserIsCompleted = async () => {
+    await connectToDb();
+    const user = await VideoTestModel.findOne({ userId });
+    const { isCompleted } = user;
+    setCompleted(isCompleted)
+  };
 
   useEffect(() => {
     const getYoutubeTestOne = async () => {
@@ -31,7 +43,6 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
 
         const youtubeTestOne: YoutubeVideoAnalytics = await response.json();
         setData(youtubeTestOne);
-        console.log("YouTube Analytics Data:", youtubeTestOne);
         setLoading(false);
       } catch (error) {
         console.error("An error occurred:", error);
@@ -40,6 +51,7 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
     };
 
     getYoutubeTestOne();
+    checkIfUserIsCompleted();
   }, []);
   if (loading) {
     <div></div>;
@@ -53,6 +65,8 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
   if (error) {
     return <div>{error}</div>;
   }
+
+  if (!completed) return <p>No results, wait till test is finished.</p>;
 
   return (
     <section className="flex flex-col gap-8">
@@ -69,17 +83,23 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
           <TableRow>
             <TableCell className="font-medium capitalize">
               {data?.youtubeTestOne.columnHeaders.map((item) => (
-                <p className="py-2" key={item.name}>{item.name}</p>
+                <p className="py-2" key={item.name}>
+                  {item.name}
+                </p>
               ))}
             </TableCell>
             <TableCell className="font-medium">
               {data?.youtubeTestOne.rows[0].map((item) => (
-                <p className="py-2" key={item}>{item}</p>
+                <p className="py-2" key={item}>
+                  {item}
+                </p>
               ))}
             </TableCell>
             <TableCell className="font-medium">
               {data?.youtubeTestTwo.rows[0].map((item) => (
-                <p className="py-2" key={item}>{item}</p>
+                <p className="py-2" key={item}>
+                  {item}
+                </p>
               ))}
             </TableCell>
           </TableRow>
