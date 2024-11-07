@@ -43,11 +43,15 @@ const Navbar = () => {
             </Button>
           </SignedOut>
         </div>
-        <div className="hidden md:flex md:mx-4">
+        <div className="hidden md:flex md:justify-center md:items-center gap-6 md:mx-4">
           <SignedOut>
+            <Link href={"/about"} className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0">About</Link>
+            <Link href={"/how-to-use"} className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0">How to use</Link>
             <Button className="flex items-center gap-1">
-              <SignInButton />
-              <LogIn className="size-5" />
+              <div className="flex items-center gap-1">
+                <SignInButton />
+                <LogIn className="size-5" />
+              </div>
             </Button>
           </SignedOut>
         </div>
@@ -70,7 +74,7 @@ const Navbar = () => {
                   </SheetTitle>
                 </SheetHeader>
                 <SheetDescription className="flex items-start flex-col gap-4">
-                  <Link href={'/'}>Home</Link>
+                  <Link href={"/"}>Home</Link>
                   <h3>Blogs</h3>
                   <h3>Products</h3>
                   <Link

@@ -107,7 +107,7 @@ const PreviewTestPage = async () => {
                 {executeAt.toDateString()}
               </p>
             </div>
-            <div className="flex justify-center gap-3">
+            <div className="flex flex-col md:flex-row justify-center gap-3">
               <Link
                 className={`${cn(
                   buttonVariants({

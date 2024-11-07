@@ -38,6 +38,7 @@ import {
 
 import { UploadDropzone } from "@/utils/uploadthing";
 import { Loader, SendHorizonal } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
   const [videoData, setVideoData] = useState<YoutubeData | null>(null);
@@ -206,7 +207,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
                           <FormItem>
                             <FormLabel>Description (A)</FormLabel>
                             <FormControl>
-                              <Input
+                              <Textarea
                                 placeholder="Enter video description"
                                 {...field}
                               />
@@ -285,7 +286,7 @@ const TestVideoPage = ({ params: { id } }: { params: { id: string } }) => {
                           <FormItem>
                             <FormLabel>Description (B)</FormLabel>
                             <FormControl>
-                              <Input
+                              <Textarea
                                 placeholder="Enter video description"
                                 {...field}
                               />
