@@ -1,5 +1,6 @@
 import { Check, Pointer, Settings } from "lucide-react";
 import Image from "next/image";
+import featureImg from "../../public/images/splittube.png"
 
 const FeatureSection = () => {
   return (
@@ -55,7 +56,7 @@ const FeatureSection = () => {
         </div>
         <div className="border-2">
           <Image
-            src={"../../public/images/splittube.png"}
+            src={featureImg}
             alt="Features Image"
             width={800}
             height={800}
