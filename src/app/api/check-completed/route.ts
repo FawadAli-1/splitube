@@ -1,4 +1,3 @@
-import { NextApiResponse } from "next";
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { auth } from "@clerk/nextjs/server";
