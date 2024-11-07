@@ -1,6 +1,6 @@
 import { Check, Pointer, Settings } from "lucide-react";
 import Image from "next/image";
-import featuredImg from "@/public/images/splittube.png"
+import featuredImage from "../../public/images/splittube.png"
 
 const FeatureSection = () => {
   return (
@@ -40,7 +40,7 @@ const FeatureSection = () => {
             video details, which are already stored in our database. So you can
             have a smooth UX with clean UI.
           </p>
-        </div>
+        </div> 
       </div>
       <div className="flex flex-col-reverse lg:flex-col gap-8 md:gap-8 md:justify-around md:items-center">
         <div className="flex flex-col gap-4">
@@ -56,7 +56,7 @@ const FeatureSection = () => {
         </div>
         <div className="border-2">
           <Image
-            src={featuredImg}
+            src={featuredImage}
             alt="Features Image"
             width={800}
             height={800}
