@@ -56,7 +56,7 @@ const FeatureSection = () => {
         </div>
         <div className="border-2">
           <Image
-            src={featuredImage}
+            src={"../../public/images/splittube.png"}
             alt="Features Image"
             width={800}
             height={800}
