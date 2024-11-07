@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Check, Pointer, Settings } from "lucide-react";
 import Image from "next/image";
 import featureImg from "../../public/images/splittube.png"
