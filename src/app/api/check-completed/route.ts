@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { connectToDb } from "@/database";
 import VideoTestModel from "@/database/schemas/VideoTestSchema";
 import { auth } from "@clerk/nextjs/server";
 
-export const GET = async (res: NextApiResponse) => {
+export const GET = async () => {
   try {
     await connectToDb();
 

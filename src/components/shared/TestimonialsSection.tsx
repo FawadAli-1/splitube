@@ -18,7 +18,8 @@ const TestimonialsSection = () => {
         <CarouselContent>
           <CarouselItem className="flex flex-col items-center gap-4">
             <p className="text-2xl border-b pb-8 border-gray-300">
-              "The first Youtube split testing app, with the best service."
+              &quot;The first Youtube split testing app, with the best
+              service.&quot;
             </p>
             <Image
               src={fawad}
@@ -33,7 +34,8 @@ const TestimonialsSection = () => {
           </CarouselItem>
           <CarouselItem className="flex flex-col items-center gap-4">
             <p className="text-2xl">
-              "The first Youtube split testing app, with the best service."
+              &quot;The first Youtube split testing app, with the best
+              service.&quot;
             </p>
             <Image
               src={fawad}
@@ -48,7 +50,8 @@ const TestimonialsSection = () => {
           </CarouselItem>
           <CarouselItem className="flex flex-col items-center gap-4">
             <p className="text-2xl">
-              "The first Youtube split testing app, with the best service."
+              &quot;The first Youtube split testing app, with the best
+              service.&quot;
             </p>
             <Image
               src={fawad}

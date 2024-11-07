@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import tiktok from "@/public/images/tiktok-icon.svg";
 import { Youtube } from "lucide-react";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 import { SignInButton } from "@clerk/nextjs";
 
 const Footer = () => {
