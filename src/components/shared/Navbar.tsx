@@ -23,17 +23,20 @@ import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   return (
-    <nav className="flex items-center justify-between mt-4 mb-8">
-      <Link href={"/"}>
-        <Image
-          priority
-          src={logo}
-          width={250}
-          height={250}
-          alt="Logo"
-          className="hover:cursor-pointer w-44 md:w-auto"
-        />
-      </Link>
+    <nav className="flex items-center justify-between mb-8">
+      <div>
+        <Link href={"/"} className="flex items-center justify-center">
+          <Image
+            priority
+            src={logo}
+            width={80}
+            height={80}
+            alt="Logo"
+            className="hover:cursor-pointer w-auto"
+          />
+          <h1 className="hidden md:flex text-xl font-bold">SplitTubeYT</h1>
+        </Link>
+      </div>
       {/* Medium to large screen signed out  */}
       <div>
         <div className="md:hidden mx-4">
@@ -45,8 +48,18 @@ const Navbar = () => {
         </div>
         <div className="hidden md:flex md:justify-center md:items-center gap-6 md:mx-4">
           <SignedOut>
-            <Link href={"/about"} className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0">About</Link>
-            <Link href={"/how-to-use"} className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0">How to use</Link>
+            <Link
+              href={"/about"}
+              className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0"
+            >
+              About
+            </Link>
+            <Link
+              href={"/how-to-use"}
+              className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0"
+            >
+              How to use
+            </Link>
             <Button className="flex items-center gap-1">
               <div className="flex items-center gap-1">
                 <SignInButton />
