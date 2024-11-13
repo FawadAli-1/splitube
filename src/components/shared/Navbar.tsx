@@ -60,7 +60,7 @@ const Navbar = () => {
             >
               How to use
             </Link>
-            <Button className="flex items-center gap-1">
+            <Button className="flex items-center gap-1 rounded-3xl">
               <div className="flex items-center gap-1">
                 <SignInButton />
                 <LogIn className="size-5" />

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import heroImage from "@/public/images/hero-image.png";
 import { Button } from "../ui/button";
-import { SignInButton } from "@clerk/nextjs";
+import { SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 const LandingPage = () => {
@@ -20,7 +20,7 @@ const LandingPage = () => {
 
         <div className="flex flex-col md:w-1/2 lg:flex-row gap-2">
           <Button size={"lg"} className="rounded-3xl">
-            <SignInButton> Get Started</SignInButton>
+            <SignUpButton> Get Started</SignUpButton>
           </Button>
           <Button
             size={"lg"}
