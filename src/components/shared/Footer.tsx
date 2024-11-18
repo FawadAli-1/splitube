@@ -50,6 +50,9 @@ const Footer = () => {
             <Link href={"/how-to-use"}>
               <li>How to Use?</li>
             </Link>
+            <Link href={"/privacy-policy"}>
+              <li>Privacy Policy</li>
+            </Link>
             <Button>
               <SignInButton>
                 <li>Sign Up</li>
