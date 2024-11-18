@@ -128,7 +128,7 @@ const PrivacyPolicyPage = () => {
         <p>
           If you have any questions or concerns about this Privacy Policy,
           please contact us at{" "}
-          <a href="mailto:support@yourapp.com">support@yourapp.com</a>.
+          <a href="mailto:becomebetter101@gmail.com">becomebetter101@gmail.com</a>.
         </p>
       </section>
     </main>
