@@ -12,6 +12,7 @@ export default function Home() {
       <section>
         <SignedIn>
           <HeroSection />
+          <Footer/>
         </SignedIn>
         <SignedOut>
           <LandingPage />
