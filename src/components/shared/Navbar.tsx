@@ -60,6 +60,12 @@ const Navbar = () => {
             >
               How to use
             </Link>
+            <Link
+              href={"/privacy-policy"}
+              className="border-r-2 border-black pr-6 hover:opacity-90 hover:border-r-0 hover:border-b-2 hover:transition-all hover:ease-in hover:duration-0"
+            >
+              Privacy Policy
+            </Link>
             <Button className="flex items-center gap-1 rounded-3xl">
               <div className="flex items-center gap-1">
                 <SignInButton />
