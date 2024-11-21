@@ -29,7 +29,7 @@ const TestimonialsSection = () => {
               className="rounded-full"
             />
             <p className="text-sm text-slate-600 text-center md:text-left">
-              Fawad Ali, Founder of SplitTubeYT
+              Fawad Ali, Founder of SplitTube
             </p>
           </CarouselItem>
           <CarouselItem className="flex flex-col items-center gap-4">
@@ -45,7 +45,7 @@ const TestimonialsSection = () => {
               className="rounded-full"
             />
             <p className="text-sm text-slate-600">
-              Fawad Ali, Founder of SplitTubeYT
+              Fawad Ali, Founder of SplitTube
             </p>
           </CarouselItem>
           <CarouselItem className="flex flex-col items-center gap-4">
@@ -61,7 +61,7 @@ const TestimonialsSection = () => {
               className="rounded-full"
             />
             <p className="text-sm text-slate-600">
-              Fawad Ali, Founder of SplitTubeYT
+              Fawad Ali, Founder of SplitTube
             </p>
           </CarouselItem>
         </CarouselContent>

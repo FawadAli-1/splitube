@@ -14,7 +14,7 @@ const LandingPage = () => {
         </h1>
         <p className="font-medium">
           Get more views, likes, shares and more using{" "}
-          <span className="text-blue-600 font-bold">SplitTubeYT</span>. <br />{" "}
+          <span className="text-blue-600 font-bold">SplitTube</span>. <br />{" "}
           Split Test Youtube Videos For Best Performance.
         </p>
 

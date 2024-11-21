@@ -62,7 +62,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="mt-4 md:mt-12 lg:mt-20">
-        <p>Copyrighted &copy; by SplitTubeYT. All rights reserved. <Link href={"/privacy-policy"} className="text-blue-600">Privacy Policy</Link></p>
+        <p>Copyrighted &copy; by SplitTube. All rights reserved. <Link href={"/privacy-policy"} className="text-blue-600">Privacy Policy</Link></p>
       </div>
     </footer>
   );

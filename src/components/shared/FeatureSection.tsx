@@ -46,11 +46,11 @@ const FeatureSection = () => {
         <div className="flex flex-col gap-4">
           <h2 className="text-left text-3xl font-bold text-slate-950">
             Youtube Split Testing Made Easy With{" "}
-            <span className="text-blue-600 font-extrabold">SplitTubeYT</span>
+            <span className="text-blue-600 font-extrabold">SplitTube</span>
           </h2>
           <p className="text-slate-600">
             Make your videos perform better by split testing between various
-            versions to find out which one is the best, now with SplitTubeYT.
+            versions to find out which one is the best, now with SplitTube.
             Create an account and start testing your videos!
           </p>
         </div>

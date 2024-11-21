@@ -34,7 +34,7 @@ const Navbar = () => {
             alt="Logo"
             className="hover:cursor-pointer w-auto"
           />
-          <h1 className="hidden md:flex text-xl font-bold">SplitTubeYT</h1>
+          <h1 className="hidden md:flex text-xl font-bold">SplitTube</h1>
         </Link>
       </div>
       {/* Medium to large screen signed out  */}
