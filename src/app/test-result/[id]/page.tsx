@@ -41,6 +41,7 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
         }
 
         const youtubeTestOne: YoutubeVideoAnalytics = await response.json();
+        console.log(youtubeTestOne);
         setData(youtubeTestOne);
         setLoading(false);
       } catch (error) {
