@@ -68,7 +68,9 @@ export const GET = async () => {
         fetchYouTubeAnalytics(startDateForTestOne, endDateForTestOne),
         fetchYouTubeAnalytics(startDateForTestTwo, endDateForTestTwo),
       ]);
-  
+
+      console.log(youtubeTestOne, youtubeTestTwo);
+      
       return new Response(
         JSON.stringify({ youtubeTestOne, youtubeTestTwo }),
         { status: 200, headers: { "Content-Type": "application/json" } }
