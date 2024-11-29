@@ -49,8 +49,8 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
       }
     };
 
-    getYoutubeTestOne();
     checkIfUserIsCompleted();
+    getYoutubeTestOne();
   }, []);
 
   if (loading) {
@@ -67,50 +67,51 @@ const PreviewTestPage = ({ params: { id } }: { params: { id: string } }) => {
 
   if (completed === false) {
     return <p>No results, wait till test is finished.</p>;
-  } else {
-    return (
-      <section className="flex flex-col gap-8">
-        <h1 className="text-2xl font-semibold mb-4 text-center">
-          Test Results
-        </h1>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Metrics</TableHead>
-              <TableHead className="w-[100px]">Test A</TableHead>
-              <TableHead className="w-[100px]">Test B</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium capitalize">
-                {data?.youtubeTestOne.columnHeaders.map((item) => (
-                  <p className="py-2" key={item.name}>
-                    {item.name}
-                  </p>
-                ))}
-              </TableCell>
-              <TableCell className="font-medium">
-                {data?.youtubeTestOne.rows[0].map((item) => (
-                  <p className="py-2" key={item}>
-                    {item}
-                  </p>
-                ))}
-              </TableCell>
-              <TableCell className="font-medium">
-                {data?.youtubeTestTwo.rows[0].map((item) => (
-                  <p className="py-2" key={item}>
-                    {item}
-                  </p>
-                ))}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-          <TableCaption>Test result for video id {id}</TableCaption>
-        </Table>
-      </section>
-    );
   }
-};
+
+  return (
+    <section className="flex flex-col gap-8">
+      <h1 className="text-2xl font-semibold mb-4 text-center">
+        Test Results
+      </h1>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Metrics</TableHead>
+            <TableHead className="w-[100px]">Test A</TableHead>
+            <TableHead className="w-[100px]">Test B</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="font-medium capitalize">
+              {data?.youtubeTestOne?.columnHeaders?.map((item) => (
+                <p className="py-2" key={item.name}>
+                  {item.name}
+                </p>
+              ))}
+            </TableCell>
+            <TableCell className="font-medium">
+              {data?.youtubeTestOne?.rows[0]?.map((item) => (
+                <p className="py-2" key={item}>
+                  {item}
+                </p>
+              ))}
+            </TableCell>
+            <TableCell className="font-medium">
+              {data?.youtubeTestTwo?.rows[0]?.map((item) => (
+                <p className="py-2" key={item}>
+                  {item}
+                </p>
+              ))}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+        <TableCaption>Test result for video id {id}</TableCaption>
+      </Table>
+    </section>
+  );
+}
+  ;
 
 export default PreviewTestPage;
