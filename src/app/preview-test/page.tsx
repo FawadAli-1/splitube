@@ -15,6 +15,61 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { NotepadText } from "lucide-react";
 import DeleteTest from "@/components/shared/DeleteTest";
+import { Metadata } from "next";
+
+export async function generateStaticParams(){
+
+  const {userId} = auth()
+
+  await connectToDb();
+  const user = await VideoTestModel.findOne({ userId });
+  if (!user) {
+    return <div>No tests in progress</div>;
+  }
+  const {
+    videoId,
+    titleA,
+    descriptionA,
+    thumbnailUrlA,
+    updatedAt,
+    tagsA,
+    executeAt,
+    titleB,
+    descriptionB,
+    thumbnailUrlB,
+    tagsB
+  }: {
+    videoId: string;
+    titleA: string;
+    descriptionA: string;
+    thumbnailUrlA: string;
+    tagsA: string;
+    titleB: string;
+    descriptionB: string;
+    thumbnailUrlB: string;
+    tagsB: string;
+    updatedAt: Date;
+    executeAt: Date;
+  } = user;
+
+  return {
+    videoId,
+    titleA,
+    descriptionA,
+    thumbnailUrlA,
+    updatedAt,
+    tagsA,
+    executeAt,
+    titleB,
+    descriptionB,
+    thumbnailUrlB,
+    tagsB
+  }
+}
+
+export const metadata: Metadata = {
+  title: "Preview Test"
+}
 
 const PreviewTestPage = async () => {
   const { userId } = auth();

@@ -13,10 +13,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SplitTubeYT - Youtube Video Split Testing",
+  title: {
+    template: "%s | SplitTubeYT",
+    default: "SplitTubeYT | Youtube Video Split Testing",
+  },
   description: "SplitTubeYT is a youtube video split testing application, which you can use to get more engagement on your videos.",
   keywords: ["youtube seo", "youtube split testing", "youtube video views", "grow on youtube", "get more views", "split testing service", "ab testing youtube", "get more views on youtube"],
-  applicationName: "SplitTubeYT"
+  applicationName: "SplitTubeYT",
+  twitter: {
+    card: "summary_large_image"
+  }
 };
 
 export default function RootLayout({

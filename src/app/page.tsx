@@ -5,6 +5,11 @@ import HeroSection from "@/components/shared/HeroSection";
 import LandingPage from "@/components/shared/LandingPage";
 import TestimonialsSection from "@/components/shared/TestimonialsSection";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home - SplitTubeYT"
+}
 
 export default function Home() {
   return (
@@ -12,7 +17,6 @@ export default function Home() {
       <section>
         <SignedIn>
           <HeroSection />
-          <Footer/>
         </SignedIn>
         <SignedOut>
           <LandingPage />
